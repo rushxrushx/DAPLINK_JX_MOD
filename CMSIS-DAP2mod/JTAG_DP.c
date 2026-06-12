@@ -1,24 +1,29 @@
-/******************************************************************************
- * @file     JTAG_DP.c
- * @brief    CMSIS-DAP JTAG DP I/O
- * @version  V1.00
- * @date     31. May 2012
+/*
+ * Copyright (c) 2013-2017 ARM Limited. All rights reserved.
  *
- * @note
- * Copyright (C) 2012 ARM Limited. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
  *
- * @par
- * ARM Limited (ARM) is supplying this software for use with Cortex-M
- * processor based microcontrollers.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @par
- * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
- * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
- * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
- * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- ******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * ----------------------------------------------------------------------
+ *
+ * $Date:        1. December 2017
+ * $Revision:    V2.0.0
+ *
+ * Project:      CMSIS-DAP Source
+ * Title:        JTAG_DP.c CMSIS-DAP JTAG DP I/O
+ *
+ *---------------------------------------------------------------------------*/
 
 #include "DAP_config.h"
 #include "DAP.h"
@@ -70,14 +75,16 @@
 //   tdi:    pointer to TDI generated data
 //   tdo:    pointer to TDO captured data
 //   return: none
-void JTAG_Sequence (uint32_t info, uint8_t *tdi, uint8_t *tdo) {
+void JTAG_Sequence (uint32_t info, const uint8_t *tdi, uint8_t *tdo) {
   uint32_t i_val;
   uint32_t o_val;
   uint32_t bit;
   uint32_t n, k;
 
   n = info & JTAG_SEQUENCE_TCK;
-  if (n == 0) n = 64;
+  if (n == 0U) {
+    n = 64U;
+  }
 
   if (info & JTAG_SEQUENCE_TMS) {
     PIN_TMS_SET();
@@ -87,8 +94,8 @@ void JTAG_Sequence (uint32_t info, uint8_t *tdi, uint8_t *tdo) {
 
   while (n) {
     i_val = *tdi++;
-    o_val = 0;
-    for (k = 8; k && n; k--, n--) {
+    o_val = 0U;
+    for (k = 8U; k && n; k--, n--) {
       JTAG_CYCLE_TDIO(i_val, bit);
       i_val >>= 1;
       o_val >>= 1;
@@ -96,7 +103,7 @@ void JTAG_Sequence (uint32_t info, uint8_t *tdi, uint8_t *tdo) {
     }
     o_val >>= k;
     if (info & JTAG_SEQUENCE_TDO) {
-      *tdo++ = o_val;
+      *tdo++ = (uint8_t)o_val;
     }
   }
 }
@@ -106,7 +113,7 @@ void JTAG_Sequence (uint32_t info, uint8_t *tdi, uint8_t *tdo) {
 //   ir:     IR value
 //   return: none
 #define JTAG_IR_Function(speed) /**/                                            \
-void JTAG_IR_##speed (uint32_t ir) {                                            \
+static void JTAG_IR_##speed (uint32_t ir) {                                     \
   uint32_t n;                                                                   \
                                                                                 \
   PIN_TMS_SET();                                                                \
@@ -116,18 +123,18 @@ void JTAG_IR_##speed (uint32_t ir) {                                            
   JTAG_CYCLE_TCK();                         /* Capture-IR */                    \
   JTAG_CYCLE_TCK();                         /* Shift-IR */                      \
                                                                                 \
-  PIN_TDI_OUT(1);                                                               \
+  PIN_TDI_OUT(1U);                                                              \
   for (n = DAP_Data.jtag_dev.ir_before[DAP_Data.jtag_dev.index]; n; n--) {      \
     JTAG_CYCLE_TCK();                       /* Bypass before data */            \
   }                                                                             \
-  for (n = DAP_Data.jtag_dev.ir_length[DAP_Data.jtag_dev.index] - 1; n; n--) {  \
+  for (n = DAP_Data.jtag_dev.ir_length[DAP_Data.jtag_dev.index] - 1U; n; n--) { \
     JTAG_CYCLE_TDI(ir);                     /* Set IR bits (except last) */     \
     ir >>= 1;                                                                   \
   }                                                                             \
   n = DAP_Data.jtag_dev.ir_after[DAP_Data.jtag_dev.index];                      \
   if (n) {                                                                      \
     JTAG_CYCLE_TDI(ir);                     /* Set last IR bit */               \
-    PIN_TDI_OUT(1);                                                             \
+    PIN_TDI_OUT(1U);                                                            \
     for (--n; n; n--) {                                                         \
       JTAG_CYCLE_TCK();                     /* Bypass after data */             \
     }                                                                           \
@@ -141,7 +148,7 @@ void JTAG_IR_##speed (uint32_t ir) {                                            
   JTAG_CYCLE_TCK();                         /* Update-IR */                     \
   PIN_TMS_CLR();                                                                \
   JTAG_CYCLE_TCK();                         /* Idle */                          \
-  PIN_TDI_OUT(1);                                                               \
+  PIN_TDI_OUT(1U);                                                              \
 }
 
 
@@ -150,7 +157,7 @@ void JTAG_IR_##speed (uint32_t ir) {                                            
 //   data:    DATA[31:0]
 //   return:  ACK[2:0]
 #define JTAG_TransferFunction(speed)        /**/                                \
-uint8_t JTAG_Transfer##speed (uint32_t request, uint32_t *data) {               \
+static uint8_t JTAG_Transfer##speed (uint32_t request, uint32_t *data) {        \
   uint32_t ack;                                                                 \
   uint32_t bit;                                                                 \
   uint32_t val;                                                                 \
@@ -182,13 +189,13 @@ uint8_t JTAG_Transfer##speed (uint32_t request, uint32_t *data) {               
                                                                                 \
   if (request & DAP_TRANSFER_RnW) {                                             \
     /* Read Transfer */                                                         \
-    val = 0;                                                                    \
-    for (n = 31; n; n--) {                                                      \
+    val = 0U;                                                                   \
+    for (n = 31U; n; n--) {                                                     \
       JTAG_CYCLE_TDO(bit);                  /* Get D0..D30 */                   \
       val  |= bit << 31;                                                        \
       val >>= 1;                                                                \
     }                                                                           \
-    n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1;                  \
+    n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1U;                 \
     if (n) {                                                                    \
       JTAG_CYCLE_TDO(bit);                  /* Get D31 */                       \
       for (--n; n; n--) {                                                       \
@@ -201,15 +208,15 @@ uint8_t JTAG_Transfer##speed (uint32_t request, uint32_t *data) {               
       JTAG_CYCLE_TDO(bit);                  /* Get D31 & Exit1-DR */            \
     }                                                                           \
     val |= bit << 31;                                                           \
-    if (data) *data = val;                                                      \
+    if (data) { *data = val; }                                                  \
   } else {                                                                      \
     /* Write Transfer */                                                        \
     val = *data;                                                                \
-    for (n = 31; n; n--) {                                                      \
+    for (n = 31U; n; n--) {                                                     \
       JTAG_CYCLE_TDI(val);                  /* Set D0..D30 */                   \
       val >>= 1;                                                                \
     }                                                                           \
-    n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1;                  \
+    n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1U;                 \
     if (n) {                                                                    \
       JTAG_CYCLE_TDI(val);                  /* Set D31 */                       \
       for (--n; n; n--) {                                                       \
@@ -227,7 +234,12 @@ exit:                                                                           
   JTAG_CYCLE_TCK();                         /* Update-DR */                     \
   PIN_TMS_CLR();                                                                \
   JTAG_CYCLE_TCK();                         /* Idle */                          \
-  PIN_TDI_OUT(1);                                                               \
+  PIN_TDI_OUT(1U);                                                              \
+                                                                                \
+  /* Capture Timestamp */                                                       \
+  if (request & DAP_TRANSFER_TIMESTAMP) {                                       \
+    DAP_Data.timestamp = TIMESTAMP_GET();                                       \
+  }                                                                             \
                                                                                 \
   /* Idle cycles */                                                             \
   n = DAP_Data.transfer.idle_cycles;                                            \
@@ -235,19 +247,19 @@ exit:                                                                           
     JTAG_CYCLE_TCK();                       /* Idle */                          \
   }                                                                             \
                                                                                 \
-  return (ack);                                                                 \
+  return ((uint8_t)ack);                                                        \
 }
 
 
 #undef  PIN_DELAY
 #define PIN_DELAY() PIN_DELAY_FAST()
-JTAG_IR_Function(Fast);
-JTAG_TransferFunction(Fast);
+JTAG_IR_Function(Fast)
+JTAG_TransferFunction(Fast)
 
 #undef  PIN_DELAY
 #define PIN_DELAY() PIN_DELAY_SLOW(DAP_Data.clock_delay)
-JTAG_IR_Function(Slow);
-JTAG_TransferFunction(Slow);
+JTAG_IR_Function(Slow)
+JTAG_TransferFunction(Slow)
 
 
 // JTAG Read IDCODE register
@@ -267,8 +279,8 @@ uint32_t JTAG_ReadIDCode (void) {
     JTAG_CYCLE_TCK();                       /* Bypass before data */
   }
 
-  val = 0;
-  for (n = 31; n; n--) {
+  val = 0U;
+  for (n = 31U; n; n--) {
     JTAG_CYCLE_TDO(bit);                    /* Get D0..D30 */
     val  |= bit << 31;
     val >>= 1;
@@ -301,16 +313,16 @@ void JTAG_WriteAbort (uint32_t data) {
     JTAG_CYCLE_TCK();                       /* Bypass before data */
   }
 
-  PIN_TDI_OUT(0);
+  PIN_TDI_OUT(0U);
   JTAG_CYCLE_TCK();                         /* Set RnW=0 (Write) */
   JTAG_CYCLE_TCK();                         /* Set A2=0 */
   JTAG_CYCLE_TCK();                         /* Set A3=0 */
 
-  for (n = 31; n; n--) {
+  for (n = 31U; n; n--) {
     JTAG_CYCLE_TDI(data);                   /* Set D0..D30 */
     data >>= 1;
   }
-  n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1;
+  n = DAP_Data.jtag_dev.count - DAP_Data.jtag_dev.index - 1U;
   if (n) {
     JTAG_CYCLE_TDI(data);                   /* Set D31 */
     for (--n; n; n--) {
@@ -326,7 +338,7 @@ void JTAG_WriteAbort (uint32_t data) {
   JTAG_CYCLE_TCK();                         /* Update-DR */
   PIN_TMS_CLR();
   JTAG_CYCLE_TCK();                         /* Idle */
-  PIN_TDI_OUT(1);
+  PIN_TDI_OUT(1U);
 }
 
 
@@ -346,14 +358,12 @@ void JTAG_IR (uint32_t ir) {
 //   request: A[3:2] RnW APnDP
 //   data:    DATA[31:0]
 //   return:  ACK[2:0]
-uint8_t  JTAG_Transfer(uint8_t request, uint32_t *data)
-{
-	if (DAP_Data.fast_clock)
-	{
-		return JTAG_TransferFast(request, data);
-	} else {
-		return JTAG_TransferSlow(request, data);
-	}
+uint8_t  JTAG_Transfer(uint32_t request, uint32_t *data) {
+  if (DAP_Data.fast_clock) {
+    return JTAG_TransferFast(request, data);
+  } else {
+    return JTAG_TransferSlow(request, data);
+  }
 }
 
 

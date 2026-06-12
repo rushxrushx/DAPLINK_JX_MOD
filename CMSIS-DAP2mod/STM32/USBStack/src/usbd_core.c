@@ -31,20 +31,7 @@ U8                USBD_ZLP;
 USBD_EP_DATA      USBD_EP0Data;
 USB_SETUP_PACKET  USBD_SetupPacket;
 
-#ifdef __RTX
-OS_TID            USBD_RTX_DevTask;            /* USB Device Task ID */
-OS_TID            USBD_RTX_EPTask[16];         /* USB Endpoint Task ID's */
-OS_TID            USBD_RTX_CoreTask;           /* USB Core Task ID */
-#endif
 
-
-__asm void $$USBD$$version (void) {
-   /* Export a version number symbol for a version control. */
-
-                EXPORT  __RL_USBD_VER
-
-__RL_USBD_VER   EQU     0x470
-}
 
 
 /*
@@ -57,7 +44,6 @@ void usbd_init (void) {
   USBD_HighSpeed     = __FALSE;
 
   usbd_class_init();
-  USBD_RTX_TaskInit();
 
   USBD_Init();
 }
@@ -643,19 +629,9 @@ void USBD_EndPoint0 (U32 event) {
               goto stall;
             }
             USBD_StatusInStage();
-#ifdef __RTX
-            if (__rtx) {
-              if (USBD_RTX_CoreTask) {
-                usbd_os_evt_set(USBD_EVT_CLR_FEATURE, USBD_RTX_CoreTask);
-              }
-            } else {
-#endif
               if (USBD_P_Feature_Event) {
                 USBD_P_Feature_Event();
               }
-#ifdef __RTX
-            }
-#endif
             break;
 
           case USB_REQUEST_SET_FEATURE:
@@ -663,19 +639,9 @@ void USBD_EndPoint0 (U32 event) {
               goto stall;
             }
             USBD_StatusInStage();
-#ifdef __RTX
-            if (__rtx) {
-              if (USBD_RTX_CoreTask) {
-                usbd_os_evt_set(USBD_EVT_SET_FEATURE, USBD_RTX_CoreTask);
-              }
-            } else {
-#endif
               if (USBD_P_Feature_Event) {
                 USBD_P_Feature_Event();
               }
-#ifdef __RTX
-            }
-#endif
             break;
 
           case USB_REQUEST_SET_ADDRESS:
@@ -708,19 +674,9 @@ void USBD_EndPoint0 (U32 event) {
               goto stall;
             }
             USBD_StatusInStage();
-#ifdef __RTX
-            if (__rtx) {
-              if (USBD_RTX_CoreTask) {
-                usbd_os_evt_set(USBD_EVT_SET_CFG, USBD_RTX_CoreTask);
-              }
-            } else {
-#endif
               if (USBD_P_Configure_Event) {
                 USBD_P_Configure_Event();
               }
-#ifdef __RTX
-            }
-#endif
             break;
 
           case USB_REQUEST_GET_INTERFACE:
@@ -735,19 +691,9 @@ void USBD_EndPoint0 (U32 event) {
               goto stall;
             }
             USBD_StatusInStage();
-#ifdef __RTX
-            if (__rtx) {
-              if (USBD_RTX_CoreTask) {
-                usbd_os_evt_set(USBD_EVT_SET_IF, USBD_RTX_CoreTask);
-              }
-            } else {
-#endif
               if (USBD_P_Interface_Event) {
                 USBD_P_Interface_Event();
               }
-#ifdef __RTX
-            }
-#endif
             break;
 
           default:
@@ -858,21 +804,3 @@ stall_i:      USBD_SetStallEP(0x80);
   }
 }
 
-
-/*
- *  USB Device Endpoint 0 RTX Task
- *    Parameters:      none
- *    Return Value:    none
- */
-
-#ifdef __RTX
-__task void USBD_RTX_EndPoint0 (void) {
-
-  if (__rtx) {
-    for (;;) {
-      usbd_os_evt_wait_or (0xFFFF, 0xFFFF);
-      USBD_EndPoint0 (usbd_os_evt_get());
-    }
-  }
-}
-#endif

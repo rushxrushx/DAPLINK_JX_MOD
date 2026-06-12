@@ -12,13 +12,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F103C8</Device>
+          <Device>STM32F103C6</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
+          <Cpu>IRAM(0x20000000-0x200027FF) IROM(0x8000000-0x8007FFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"STARTUP\ST\STM32F10x\startup_stm32f10x_md.s" ("STM32 Medium Density Line Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL010000)</FlashDriverDll>
-          <DeviceId>4235</DeviceId>
+          <StartupFile>"STARTUP\ST\STM32F10x\startup_stm32f10x_ld.s" ("STM32 Low Density Line Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL08000)</FlashDriverDll>
+          <DeviceId>4236</DeviceId>
           <RegisterFile>stm32f10x.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -29,7 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\ST\STM32F1xx\STM32F103xx.sfrSVD=SFD\ST\STM32F1xx\STM32F103xx.sfr</SFDFile>
+          <SFDFile>SFD\ST\STM32F1xx\STM32F103xx.sfr</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -104,11 +104,11 @@
           <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments></SimDllArguments>
           <SimDlgDll>DARMSTM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pSTM32F103C8</SimDlgDllArguments>
+          <SimDlgDllArguments>-pSTM32F103C6</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMSTM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pSTM32F103C8</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pSTM32F103C6</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -133,7 +133,7 @@
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -144,7 +144,7 @@
             <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>1</TargetSelection>
+          <TargetSelection>0</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -277,12 +277,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x5000</Size>
+                <Size>0x2800</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -307,7 +307,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -332,7 +332,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x5000</Size>
+                <Size>0x2800</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -344,7 +344,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -360,7 +360,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER STM32F10X_MD STM32F103Cx STLINK_V20</Define>
+              <Define>USE_STDPERIPH_DRIVER STM32F10X_MD STM32F103Cx STLINK_V21</Define>
               <Undefine></Undefine>
               <IncludePath>.;.\STM32F10x_StdPeriph_Driver\inc;.\USBStack\inc</IncludePath>
             </VariousControls>
@@ -392,7 +392,7 @@
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\CMSIS_DAP-C8.sct</ScatterFile>
+            <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -416,14 +416,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -446,51 +461,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -966,14 +939,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -996,51 +984,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1516,14 +1462,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -1546,51 +1507,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2066,14 +1985,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -2096,51 +2030,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2616,14 +2508,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -2646,51 +2553,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3166,14 +3031,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -3196,51 +3076,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3716,14 +3554,29 @@
               <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>CMSIS-DAP.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS-DAP.c</FilePath>
+              <FilePath>..\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>UserApp.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UserApp.c</FilePath>
+              <FilePath>..\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DAP.c</FilePath>
             </File>
             <File>
               <FileName>usb_config.c</FileName>
@@ -3746,51 +3599,9 @@
               <FilePath>.\usbd_user_hid.c</FilePath>
             </File>
             <File>
-              <FileName>DAP_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\DAP_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CMSIS_DAP-C8.sct</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS_DAP-C8.sct</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Aads>
-                    <interw>2</interw>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <thumb>2</thumb>
-                    <SplitLS>2</SplitLS>
-                    <SwStkChk>2</SwStkChk>
-                    <NoWarn>2</NoWarn>
-                    <uSurpInc>2</uSurpInc>
-                    <useXO>2</useXO>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Aads>
-                </FileArmAds>
-              </FileOption>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>

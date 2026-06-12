@@ -31,6 +31,24 @@ EP_BUF_DSCR *pBUF_DSCR = (EP_BUF_DSCR *)USB_PMA_ADDR;
 // Endpoint Free Buffer Address
 U16 FreeBufAddr;
 
+
+//USB_OTG us
+void USB_OTG_BSP_uDelay (const uint32_t usec)
+{
+  uint32_t count = 0;
+  const uint32_t utime = ((SystemCoreClock/1000000) * usec / 7);
+  do
+  {
+    if ( ++count > utime )
+    {
+      return ;
+    }
+  }
+  while (1);
+}
+
+
+
 /**
  * @brief	Reset Endpoint
  * @params	EPNum:	Endpoint Number
@@ -79,33 +97,36 @@ void EP_Status (U32 EPNum, U32 stat)
 	}
 }
 
-/**
- * @brief	USB Device Interrupt enable
- *			Called by USBD_Init to enable the USB Interrupt
- * @return	None
- */
-#ifdef __RTX
-void __svc(1) USBD_IntrEna	(void);
-void __SVC_1				(void)
-{
-#else
-void		  USBD_IntrEna (void)
-{
-#endif
-	NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
-}
 
 /**
  * @brief	USB Device Initialize Function
  *			Called by the User to initialize USB
  * @return	None
  */
+ 
+ 
+/* Control USB connecting via SW	*/
+#ifdef PIN_USB_CONNECT_PORT
+const GPIO_InitTypeDef INIT_PIN_USB_CONNECT = {
+	PIN_USB_CONNECT,
+	GPIO_Speed_2MHz,
+	PIN_USB_MODE
+};
+#endif
+
+ 
 void USBD_Init (void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_USBEN;
 
-	USBD_IntrEna ();			/* Enable USB Interrupts */
-	PORT_USB_CONNECT_SETUP();
+	NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);/* Enable USB Interrupts */
+	
+	//pull up io
+	#ifdef PIN_USB_CONNECT_PORT
+	RCC->APB2ENR |= PIN_USB_CONNECT_RCC;
+	PIN_USB_CONNECT_OFF();
+	GPIO_INIT(PIN_USB_CONNECT_PORT, INIT_PIN_USB_CONNECT);
+	#endif
 }
 
 /*
@@ -119,7 +140,9 @@ void USBD_Connect (BOOL con)
 	if (con)
 	{
 		CNTR = CNTR_FRES;				/* Force USB Reset						*/
+		USB_OTG_BSP_uDelay(1);
 		CNTR = 0;
+		USB_OTG_BSP_uDelay(10);
 		ISTR = 0;						/* Clear Interrupt Status				*/
 		CNTR = CNTR_RESETM | CNTR_SUSPM | CNTR_WKUPM;	/* USB Interrupt Mask	*/
 
@@ -144,17 +167,12 @@ void USBD_Reset (void)
 	ISTR = 0;	/* Clear Interrupt Status		*/
 
 	CNTR = CNTR_CTRM | CNTR_RESETM | CNTR_SUSPM | CNTR_WKUPM
-#ifdef __RTX
-			| ((USBD_RTX_DevTask	!= 0) ? CNTR_ERRM	: 0)
-			| ((USBD_RTX_DevTask	!= 0) ? CNTR_PMAOVRM : 0)
-			| ((USBD_RTX_DevTask	!= 0) ? CNTR_SOFM	: 0)
-			| ((USBD_RTX_DevTask	!= 0) ? CNTR_ESOFM	: 0);
-#else
+
 			| ((USBD_P_Error_Event != 0) ? CNTR_ERRM	: 0)
 			| ((USBD_P_Error_Event != 0) ? CNTR_PMAOVRM : 0)
 			| ((USBD_P_SOF_Event	!= 0) ? CNTR_SOFM	: 0)
 			| ((USBD_P_SOF_Event	!= 0) ? CNTR_ESOFM	: 0);
-#endif
+
 
 	FreeBufAddr = EP_BUF_ADDR;
 
@@ -411,7 +429,7 @@ U32 USBD_ReadEP (U32 EPNum, U8 *pData)
 	cnt = (pBUF_DSCR + num)->COUNT_RX & EP_COUNT_MASK;
 	for (n = 0; n < (cnt + 1) / 2; n++)
 	{
-		*((__packed U16 *)pData) = *pv++;
+		*((__packed U16 *)pData) = (uint16_t)*pv++;
 		pData += 2;
 	}
 	EP_Status(EPNum, EP_RX_VALID);
@@ -464,19 +482,6 @@ U32 USBD_GetFrame (void)
 	return (FNR & FNR_FN);
 }
 
-#ifdef __RTX
-U32 LastError;						  /* Last Error						 */
-
-/*
- *  Get USB Last Error Code
- *	Parameters:	  None
- *	Return Value:	Error Code
- */
-U32 USBD_GetError (void)
-{
-	return (LastError);
-}
-#endif
 
 /*
  *  USB Device Interrupt Service Routine
@@ -491,101 +496,57 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	{	/* USB Reset Request */
 		USBD_Reset();
 		usbd_reset_core();
-#ifdef __RTX
-		if (USBD_RTX_DevTask)
-		{
-			isr_evt_set(USBD_EVT_RESET, USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_Reset_Event)
 		{
 			USBD_P_Reset_Event();
 		}
-#endif
 		ISTR = ~ISTR_RESET;
 	}
 
 	if (istr & ISTR_SUSP)
 	{	/* USB Suspend Request */
 		USBD_Suspend();
-#ifdef __RTX
-		if (USBD_RTX_DevTask)
-		{
-			isr_evt_set(USBD_EVT_SUSPEND, USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_Suspend_Event)
 		{
 			USBD_P_Suspend_Event();
 		}
-#endif
 		ISTR = ~ISTR_SUSP;
 	}
 
 	if (istr & ISTR_WKUP)
 	{	/* USB Wakeup */
 		USBD_WakeUp();
-#ifdef __RTX
-		if (USBD_RTX_DevTask)
-		{
-			isr_evt_set(USBD_EVT_RESUME,  USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_Resume_Event)
 		{
 			USBD_P_Resume_Event();
 		}
-#endif
 		ISTR = ~ISTR_WKUP;
 	}
 
 	if (istr & ISTR_SOF)
 	{	/* Start of Frame */
-#ifdef __RTX
-		if (USBD_RTX_DevTask)
-		{
-			isr_evt_set(USBD_EVT_SOF, USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_SOF_Event)
 		{
 			USBD_P_SOF_Event();
 		}
-#endif
 		ISTR = ~ISTR_SOF;
 	}
 
 	if (istr & ISTR_PMAOVR)
 	{
-#ifdef __RTX
-		LastError = 2;
-		if (USBD_RTX_DevTask)
-		{	/* PMA Over/underrun */
-			isr_evt_set(USBD_EVT_ERROR, USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_Error_Event)
 		{
 			USBD_P_Error_Event(2);
 		}
-#endif
 		ISTR = ~ISTR_PMAOVR;
 	}
 
 	if (istr & ISTR_ERR)
 	{	/* Error: No Answer, CRC Error, Bit Stuff Error, Frame Format Error */
-#ifdef __RTX
-		LastError = 1;
-		if (USBD_RTX_DevTask)
-		{
-			isr_evt_set(USBD_EVT_ERROR, USBD_RTX_DevTask);
-		}
-#else
 		if (USBD_P_Error_Event)
 		{
 			USBD_P_Error_Event(1);
 		}
-#endif
 		ISTR = ~ISTR_ERR;
 	}
 
@@ -599,32 +560,18 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 		if (val & EP_CTR_RX)
 		{
 			EPxREG(num) = val & ~EP_CTR_RX & EP_MASK;
-#ifdef __RTX
-			if (USBD_RTX_EPTask[num])
-			{
-				isr_evt_set((val & EP_SETUP) ? USBD_EVT_SETUP : USBD_EVT_OUT, USBD_RTX_EPTask[num]);
-			}
-#else
 			if (USBD_P_EP[num])
 			{
 				USBD_P_EP[num]((val & EP_SETUP) ? USBD_EVT_SETUP : USBD_EVT_OUT);
 			}
-#endif
 		}
 		if (val & EP_CTR_TX)
 		{
 			EPxREG(num) = val & ~EP_CTR_TX & EP_MASK;
-#ifdef __RTX
-			if (USBD_RTX_EPTask[num])
-			{
-				isr_evt_set(USBD_EVT_IN,  USBD_RTX_EPTask[num]);
-			}
-#else
 			if (USBD_P_EP[num])
 			{
 				USBD_P_EP[num](USBD_EVT_IN);
 			}
-#endif
 		}
 	}
 }
