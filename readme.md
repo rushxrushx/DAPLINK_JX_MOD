@@ -1,5 +1,12 @@
-## stm32f103 DAPLINK v1(HID) v1.3  
+## stm32f103 DAPLINK v2(BULK) v1.4  
 # whats new  
+1.change bulk transfer mode for dap code (real 2.12)  
+2. fwlib and usbstack charge to ST original.   
+chinese:  
+将原本HID传输模式改为BULK传输模式(真实实现2.12)  
+使用ST原版固件库   
+
+# stm32f103 DAPLINK v1(HID) v1.3  
 1.update cmsis dap code to v1.3(2.12)  
 2.mod some header file to compile in keil 4.74  
 3.cut packet buffer 64 to 4 ,support stm32f103C6T6A devices without heap crash.  
